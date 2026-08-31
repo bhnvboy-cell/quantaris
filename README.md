@@ -7,6 +7,22 @@ A multi-tenant Six Sigma DMAIC project management platform. Two architectures co
 
 ---
 
+## Screenshots
+
+| Dashboard | Projects |
+|-----------|----------|
+| ![Dashboard](screenshots/Screenshot%202026-08-30%20065447.png) | ![Projects](screenshots/Screenshot%202026-08-31%20064006.png) |
+
+| DMAIC Workflow | Tools |
+|----------------|-------|
+| ![DMAIC](screenshots/Screenshot%202026-08-31%20064052.png) | ![Tools](screenshots/Screenshot%202026-08-31%20064146.png) |
+
+| Reports |
+|---------|
+| ![Reports](screenshots/Screenshot%202026-08-31%20070231.png) |
+
+---
+
 ## Modern Architecture (src/)
 
 ### Prerequisites
