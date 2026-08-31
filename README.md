@@ -1,9 +1,36 @@
 # Quantaris
 
-A multi-tenant Six Sigma DMAIC project management platform. Two architectures coexist in this repository:
+A multi-tenant Six Sigma DMAIC project management platform built for quality teams. Two architectures coexist in this repository:
 
 1. **Legacy** — ASP.NET WebForms (.NET Framework 4.8 / VB.NET)
 2. **Modern** — ASP.NET Core Web API (C#) + Clean Architecture
+
+## About
+
+Quantaris is a full-stack SaaS application for managing Six Sigma DMAIC projects end-to-end. It provides structured workflow tools, statistical analysis, and team collaboration features for quality engineers and process improvement teams.
+
+### Features
+
+- **DMAIC Workflow** — 15-step Define/Measure/Analyze/Improve/Control lifecycle with progress tracking
+- **Quality Tools** — FMEA, Control Charts, Regression, Gage R&R, Monte Carlo, Process Capability, DOE, COPQ, QFD, Hoshin Kanri, Sample Size, Gantt Charts
+- **AI Grammar Assist** — LanguageTool-powered grammar/spelling checks on all text fields, with optional OpenAI rephrasing
+- **Dashboard** — KPI tiles, project status charts, DMAIC phase progress (Chart.js)
+- **Projects** — Create, edit, tile-based project views with status tracking and CSV export
+- **Training LMS** — Course management with quizzes and scoring
+- **Audit Trail** — Automatic logging of all record changes
+- **Multi-Tenant** — Tenant isolation at database level with JWT authentication
+- **Custom Themes** — 4 selectable UI themes (Modern, Classical, Premium, Minimal) with localStorage persistence
+
+### Tech Stack
+
+| Layer | Legacy | Modern |
+|-------|--------|--------|
+| Frontend | ASP.NET WebForms, Bootstrap 5, Chart.js | Blazor WebAssembly (planned) |
+| Backend | VB.NET, .NET Framework 4.8 | C#, .NET 10, ASP.NET Core 8 |
+| Database | MySQL (MariaDB 10.4) via MySql.Data | MySQL via Pomelo EF Core |
+| Auth | Session + PBKDF2 hashing | JWT Bearer tokens |
+| Grammar | LanguageTool API (free) + optional OpenAI | Same |
+| Server | Standalone Kestrel (SixSigmaSaaS-Server.exe) | Docker Compose |
 
 ---
 
