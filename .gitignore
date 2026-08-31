@@ -1,0 +1,38 @@
+# Quantaris - compiled/temp
+Quantaris/App_Data/Temp/
+Quantaris/App_Data/openai_key.txt
+Quantaris/bin/
+Quantaris/Bin/obj/
+*.exe
+*.pdb
+
+# ASP.NET temp files
+Temporary ASP.NET Files/
+
+# User-specific files
+*.user
+*.suo
+*.vs/
+.vscode/
+
+# OS files
+Thumbs.db
+Desktop.ini
+.DS_Store
+
+# Backup folders
+*_backup/
+
+# Server logs
+srv_out.txt
+srv_err.txt
+
+# NuGet
+packages/
+
+# Node
+node_modules/
+
+# Modern src build output
+src/**/bin/
+src/**/obj/

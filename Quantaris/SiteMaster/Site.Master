@@ -1,0 +1,1228 @@
+<%@ Master Language="VB" CodeFile="Site.Master.vb" Inherits="SiteMaster" %>
+<!DOCTYPE html>
+<html lang="en">
+<head runat="server">
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title><%= Page.Title %> - Quantaris</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <asp:ContentPlaceHolder ID="HeadContent" runat="server">
+    </asp:ContentPlaceHolder>
+    <style>
+        /* ========== THEME: MODERN (Default - Dark Teal) ========== */
+        [data-theme="modern"], :root {
+            --ox-bg-primary: #0f0f1a;
+            --ox-bg-secondary: #171728;
+            --ox-bg-card: #1e1e32;
+            --ox-bg-card-hover: #252542;
+            --ox-bg-input: #1a1a2e;
+            --ox-border: #2a2a45;
+            --ox-border-focus: #00d4aa;
+            --ox-text-primary: #e8e8f0;
+            --ox-text-secondary: #8b8ba3;
+            --ox-text-muted: #5a5a7a;
+            --ox-accent: #00d4aa;
+            --ox-accent-hover: #00e8bc;
+            --ox-accent-dim: rgba(0, 212, 170, 0.15);
+            --ox-accent-rgb: 0, 212, 170;
+            --ox-blue: #4a9eff;
+            --ox-orange: #ff8c42;
+            --ox-red: #ff4d6a;
+            --ox-purple: #a78bfa;
+            --ox-logo-bg: linear-gradient(135deg, #00d4aa, #0090ff);
+            --ox-header-shadow: 0 1px 3px rgba(0,0,0,0.3);
+            --ox-card-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            --ox-sidebar-width: 260px;
+            --ox-sidebar-collapsed: 64px;
+            --ox-header-height: 52px;
+            --ox-statusbar-height: 32px;
+            --ox-radius: 8px;
+            --ox-radius-sm: 6px;
+        }
+
+        /* ========== THEME: CLASSICAL (Light Blue) ========== */
+        [data-theme="classical"] {
+            --ox-bg-primary: #f0f2f5;
+            --ox-bg-secondary: #ffffff;
+            --ox-bg-card: #ffffff;
+            --ox-bg-card-hover: #f8f9fa;
+            --ox-bg-input: #f0f2f5;
+            --ox-border: #dde1e6;
+            --ox-border-focus: #0066cc;
+            --ox-text-primary: #1a1a2e;
+            --ox-text-secondary: #5a5a6e;
+            --ox-text-muted: #8c8c9e;
+            --ox-accent: #0066cc;
+            --ox-accent-hover: #0052a3;
+            --ox-accent-dim: rgba(0, 102, 204, 0.1);
+            --ox-accent-rgb: 0, 102, 204;
+            --ox-blue: #0066cc;
+            --ox-orange: #d97706;
+            --ox-red: #dc2626;
+            --ox-purple: #7c3aed;
+            --ox-logo-bg: linear-gradient(135deg, #0066cc, #004499);
+            --ox-header-shadow: 0 1px 3px rgba(0,0,0,0.08);
+            --ox-card-shadow: 0 1px 4px rgba(0,0,0,0.06);
+            --ox-radius: 8px;
+            --ox-radius-sm: 6px;
+        }
+        [data-theme="classical"] .ox-sidebar { background: #ffffff; border-right-color: #dde1e6; }
+        [data-theme="classical"] .ox-nav-link:hover { background: rgba(0,0,0,0.04); }
+        [data-theme="classical"] .ox-nav-link.active { background: rgba(0,102,204,0.08); border-left-color: #0066cc; color: #0066cc; }
+        [data-theme="classical"] .ox-sidebar-divider { background: #dde1e6; }
+        [data-theme="classical"] .ox-table thead th { background: #f0f2f5; }
+        [data-theme="classical"] .ox-table tbody tr:hover { background: rgba(0,0,0,0.02); }
+        [data-theme="classical"] ::-webkit-scrollbar-thumb { background: #c0c4cc; }
+        [data-theme="classical"] ::-webkit-scrollbar-thumb:hover { background: #8c8c9e; }
+
+        /* ========== THEME: PREMIUM (Dark Gold) ========== */
+        [data-theme="premium"] {
+            --ox-bg-primary: #111118;
+            --ox-bg-secondary: #1a1a24;
+            --ox-bg-card: #22222e;
+            --ox-bg-card-hover: #2a2a38;
+            --ox-bg-input: #1e1e2a;
+            --ox-border: #33334a;
+            --ox-border-focus: #d4a843;
+            --ox-text-primary: #f0ece4;
+            --ox-text-secondary: #a09888;
+            --ox-text-muted: #6a6258;
+            --ox-accent: #d4a843;
+            --ox-accent-hover: #e0b84e;
+            --ox-accent-dim: rgba(212, 168, 67, 0.12);
+            --ox-accent-rgb: 212, 168, 67;
+            --ox-blue: #5b9bd5;
+            --ox-orange: #e0943a;
+            --ox-red: #d45454;
+            --ox-purple: #b07ad4;
+            --ox-logo-bg: linear-gradient(135deg, #d4a843, #b08830);
+            --ox-header-shadow: 0 1px 4px rgba(0,0,0,0.4);
+            --ox-card-shadow: 0 2px 10px rgba(0,0,0,0.3);
+            --ox-radius: 8px;
+            --ox-radius-sm: 6px;
+        }
+        [data-theme="premium"] .ox-sidebar { background: #1a1a24; border-right-color: #33334a; }
+        [data-theme="premium"] .ox-nav-link.active { background: rgba(212,168,67,0.1); border-left-color: #d4a843; color: #d4a843; }
+        [data-theme="premium"] .ox-sidebar-divider { background: #33334a; }
+
+        /* ========== THEME: MINIMAL (Clean White) ========== */
+        [data-theme="minimal"] {
+            --ox-bg-primary: #fafafa;
+            --ox-bg-secondary: #ffffff;
+            --ox-bg-card: #ffffff;
+            --ox-bg-card-hover: #f5f5f5;
+            --ox-bg-input: #f5f5f5;
+            --ox-border: #e5e5e5;
+            --ox-border-focus: #171717;
+            --ox-text-primary: #171717;
+            --ox-text-secondary: #525252;
+            --ox-text-muted: #a3a3a3;
+            --ox-accent: #171717;
+            --ox-accent-hover: #404040;
+            --ox-accent-dim: rgba(23, 23, 23, 0.06);
+            --ox-accent-rgb: 23, 23, 23;
+            --ox-blue: #2563eb;
+            --ox-orange: #ea580c;
+            --ox-red: #dc2626;
+            --ox-purple: #7c3aed;
+            --ox-logo-bg: linear-gradient(135deg, #171717, #404040);
+            --ox-header-shadow: 0 1px 2px rgba(0,0,0,0.05);
+            --ox-card-shadow: 0 1px 3px rgba(0,0,0,0.04);
+            --ox-radius: 6px;
+            --ox-radius-sm: 4px;
+        }
+        [data-theme="minimal"] .ox-sidebar { background: #ffffff; border-right-color: #e5e5e5; }
+        [data-theme="minimal"] .ox-nav-link { border-left: none; border-left: 2px solid transparent; }
+        [data-theme="minimal"] .ox-nav-link:hover { background: #f5f5f5; }
+        [data-theme="minimal"] .ox-nav-link.active { background: #f5f5f5; border-left-color: #171717; color: #171717; font-weight: 500; }
+        [data-theme="minimal"] .ox-sidebar-divider { background: #e5e5e5; }
+        [data-theme="minimal"] .ox-table thead th { background: #fafafa; }
+        [data-theme="minimal"] .ox-table tbody tr:hover { background: #fafafa; }
+        [data-theme="minimal"] .ox-card { border-radius: var(--ox-radius-sm); }
+        [data-theme="minimal"] ::-webkit-scrollbar-thumb { background: #d4d4d4; }
+        [data-theme="minimal"] ::-webkit-scrollbar-thumb:hover { background: #a3a3a3; }
+
+        /* ========== BASE STYLES ========== */
+        *, *::before, *::after { box-sizing: border-box; }
+        body {
+            margin: 0;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--ox-bg-primary);
+            color: var(--ox-text-primary);
+            font-size: 13px;
+            line-height: 1.5;
+            overflow: hidden;
+            height: 100vh;
+            transition: background 0.3s, color 0.3s;
+        }
+        a { color: var(--ox-accent); text-decoration: none; transition: color 0.15s; }
+        a:hover { color: var(--ox-accent-hover); }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--ox-border); border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--ox-text-muted); }
+
+        /* Header */
+        .ox-header {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            height: var(--ox-header-height);
+            background: var(--ox-bg-secondary);
+            border-bottom: 1px solid var(--ox-border);
+            display: flex;
+            align-items: center;
+            padding: 0 16px;
+            z-index: 1100;
+            gap: 12px;
+            box-shadow: var(--ox-header-shadow);
+            transition: background 0.3s, border-color 0.3s;
+        }
+        .ox-header-brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            min-width: 180px;
+        }
+        .ox-header-brand .ox-logo {
+            width: 30px; height: 30px;
+            background: var(--ox-logo-bg);
+            border-radius: var(--ox-radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 15px;
+            color: #fff;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+        .ox-header-brand .ox-brand-text {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--ox-text-primary);
+            letter-spacing: -0.02em;
+        }
+        .ox-header-brand .ox-version {
+            font-size: 10px;
+            color: var(--ox-text-muted);
+            background: var(--ox-bg-card);
+            padding: 1px 6px;
+            border-radius: 3px;
+            font-weight: 500;
+            border: 1px solid var(--ox-border);
+        }
+        .ox-sidebar-toggle {
+            background: none;
+            border: 1px solid var(--ox-border);
+            color: var(--ox-text-secondary);
+            width: 32px; height: 32px;
+            border-radius: var(--ox-radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            flex-shrink: 0;
+        }
+        .ox-sidebar-toggle:hover {
+            border-color: var(--ox-accent);
+            color: var(--ox-accent);
+            background: var(--ox-accent-dim);
+        }
+        .ox-header-search {
+            flex: 1;
+            max-width: 360px;
+            position: relative;
+        }
+        .ox-header-search input {
+            width: 100%;
+            background: var(--ox-bg-input);
+            border: 1px solid var(--ox-border);
+            color: var(--ox-text-primary);
+            padding: 6px 12px 6px 32px;
+            border-radius: var(--ox-radius-sm);
+            font-size: 12px;
+            font-family: inherit;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        .ox-header-search input:focus {
+            border-color: var(--ox-accent);
+            box-shadow: 0 0 0 2px var(--ox-accent-dim);
+        }
+        .ox-header-search input::placeholder { color: var(--ox-text-muted); }
+        .ox-header-search i {
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--ox-text-muted);
+            font-size: 12px;
+        }
+        .ox-header-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-left: auto;
+        }
+
+        /* Theme Selector */
+        .ox-theme-selector {
+            position: relative;
+        }
+        .ox-theme-btn {
+            background: var(--ox-bg-card);
+            border: 1px solid var(--ox-border);
+            color: var(--ox-text-secondary);
+            width: 32px; height: 32px;
+            border-radius: var(--ox-radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 14px;
+        }
+        .ox-theme-btn:hover {
+            border-color: var(--ox-accent);
+            color: var(--ox-accent);
+        }
+        .ox-theme-dropdown {
+            display: none;
+            position: absolute;
+            top: calc(100% + 6px);
+            right: 0;
+            background: var(--ox-bg-card);
+            border: 1px solid var(--ox-border);
+            border-radius: var(--ox-radius);
+            padding: 6px;
+            min-width: 180px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+            z-index: 2000;
+        }
+        .ox-theme-dropdown.show { display: block; }
+        .ox-theme-dropdown-title {
+            font-size: 10px;
+            font-weight: 600;
+            color: var(--ox-text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            padding: 6px 8px 4px;
+        }
+        .ox-theme-option {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 7px 8px;
+            border-radius: var(--ox-radius-sm);
+            cursor: pointer;
+            transition: background 0.15s;
+            border: none;
+            background: none;
+            width: 100%;
+            text-align: left;
+            font-family: inherit;
+        }
+        .ox-theme-option:hover { background: var(--ox-bg-card-hover); }
+        .ox-theme-option.active { background: var(--ox-accent-dim); }
+        .ox-theme-option .ox-theme-swatch {
+            width: 18px; height: 18px;
+            border-radius: 50%;
+            border: 2px solid var(--ox-border);
+            flex-shrink: 0;
+            position: relative;
+        }
+        .ox-theme-option.active .ox-theme-swatch { border-color: var(--ox-accent); }
+        .ox-theme-option.active .ox-theme-swatch::after {
+            content: '✓';
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 10px;
+            color: #fff;
+            font-weight: 700;
+        }
+        .ox-theme-option .ox-theme-name {
+            font-size: 12px;
+            color: var(--ox-text-primary);
+            font-weight: 500;
+        }
+        .swatch-modern { background: linear-gradient(135deg, #0f0f1a 50%, #00d4aa 50%); }
+        .swatch-classical { background: linear-gradient(135deg, #ffffff 50%, #0066cc 50%); }
+        .swatch-premium { background: linear-gradient(135deg, #111118 50%, #d4a843 50%); }
+        .swatch-minimal { background: linear-gradient(135deg, #fafafa 50%, #171717 50%); }
+
+        /* Tenant / User */
+        .ox-tenant-badge {
+            background: var(--ox-accent-dim);
+            color: var(--ox-accent);
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.03em;
+        }
+        .ox-user-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 4px 10px;
+            border-radius: var(--ox-radius-sm);
+            background: var(--ox-bg-card);
+            border: 1px solid var(--ox-border);
+        }
+        .ox-user-avatar {
+            width: 24px; height: 24px;
+            border-radius: 50%;
+            background: var(--ox-logo-bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            color: #fff;
+            font-weight: 600;
+        }
+        .ox-user-name { font-size: 12px; color: var(--ox-text-primary); }
+        .ox-btn-logout {
+            background: none;
+            border: 1px solid var(--ox-border);
+            color: var(--ox-text-secondary);
+            padding: 5px 10px;
+            border-radius: var(--ox-radius-sm);
+            font-size: 11px;
+            font-family: inherit;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .ox-btn-logout:hover {
+            border-color: var(--ox-red);
+            color: var(--ox-red);
+            background: rgba(255, 77, 106, 0.1);
+        }
+
+        /* Sidebar */
+        .ox-sidebar {
+            position: fixed;
+            top: var(--ox-header-height);
+            left: 0;
+            bottom: var(--ox-statusbar-height);
+            width: var(--ox-sidebar-width);
+            background: var(--ox-bg-secondary);
+            border-right: 1px solid var(--ox-border);
+            overflow-y: auto;
+            overflow-x: hidden;
+            z-index: 1000;
+            transition: width 0.25s cubic-bezier(0.4, 0, 0.2, 1), transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), background 0.3s;
+        }
+        .ox-sidebar.collapsed {
+            width: var(--ox-sidebar-collapsed);
+        }
+        .ox-sidebar-section { padding: 12px 0 4px; }
+        .ox-sidebar-section-title {
+            font-size: 10px;
+            font-weight: 600;
+            color: var(--ox-text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            padding: 0 16px;
+            margin-bottom: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            opacity: 1;
+            transition: opacity 0.2s;
+        }
+        .ox-sidebar.collapsed .ox-sidebar-section-title {
+            opacity: 0;
+            height: 0;
+            padding: 0;
+            margin: 0;
+        }
+        .ox-nav-link {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 7px 16px;
+            color: var(--ox-text-secondary);
+            font-size: 12.5px;
+            font-weight: 400;
+            transition: all 0.15s;
+            border-left: 2px solid transparent;
+            cursor: pointer;
+            white-space: nowrap;
+            text-decoration: none;
+        }
+        .ox-nav-link:hover {
+            color: var(--ox-text-primary);
+            background: var(--ox-accent-dim);
+        }
+        .ox-nav-link.active {
+            color: var(--ox-accent);
+            background: var(--ox-accent-dim);
+            border-left-color: var(--ox-accent);
+            font-weight: 500;
+        }
+        .ox-nav-link i {
+            font-size: 15px;
+            width: 20px;
+            text-align: center;
+            flex-shrink: 0;
+        }
+        .ox-nav-link .ox-nav-label {
+            opacity: 1;
+            transition: opacity 0.2s;
+            overflow: hidden;
+        }
+        .ox-sidebar.collapsed .ox-nav-label {
+            opacity: 0;
+            width: 0;
+        }
+        .ox-sidebar.collapsed .ox-nav-link {
+            justify-content: center;
+            padding: 10px 0;
+        }
+        .ox-sidebar-divider {
+            height: 1px;
+            background: var(--ox-border);
+            margin: 4px 16px;
+            transition: background 0.3s;
+        }
+
+        /* Sidebar Tooltips (collapsed mode) */
+        .ox-sidebar.collapsed .ox-nav-link {
+            position: relative;
+        }
+        .ox-sidebar.collapsed .ox-nav-link::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            left: calc(100% + 8px);
+            top: 50%;
+            transform: translateY(-50%);
+            background: var(--ox-bg-card);
+            color: var(--ox-text-primary);
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 11px;
+            white-space: nowrap;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.15s;
+            border: 1px solid var(--ox-border);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            z-index: 1100;
+        }
+        .ox-sidebar.collapsed .ox-nav-link:hover::after {
+            opacity: 1;
+        }
+
+        /* Main Content */
+        .ox-main {
+            margin-left: var(--ox-sidebar-width);
+            margin-top: var(--ox-header-height);
+            height: calc(100vh - var(--ox-header-height) - var(--ox-statusbar-height));
+            overflow-y: auto;
+            padding: 20px 24px;
+            transition: margin-left 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .ox-main.sidebar-collapsed {
+            margin-left: var(--ox-sidebar-collapsed);
+        }
+
+        /* Status Bar */
+        .ox-statusbar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: var(--ox-statusbar-height);
+            background: var(--ox-bg-secondary);
+            border-top: 1px solid var(--ox-border);
+            display: flex;
+            align-items: center;
+            padding: 0 16px;
+            font-size: 11px;
+            color: var(--ox-text-muted);
+            z-index: 1100;
+            gap: 16px;
+            transition: background 0.3s, border-color 0.3s;
+        }
+        .ox-statusbar .ox-status-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .ox-statusbar .ox-status-dot {
+            width: 6px; height: 6px;
+            border-radius: 50%;
+            background: var(--ox-accent);
+        }
+        .ox-statusbar .ox-status-dot.warning { background: var(--ox-orange); }
+        .ox-statusbar .ox-status-dot.error { background: var(--ox-red); }
+        .ox-statusbar .ox-status-right {
+            margin-left: auto;
+            display: flex;
+            gap: 16px;
+        }
+
+        /* Card system */
+        .ox-card {
+            background: var(--ox-bg-card);
+            border: 1px solid var(--ox-border);
+            border-radius: var(--ox-radius);
+            padding: 16px;
+            transition: border-color 0.2s, box-shadow 0.2s, background 0.3s;
+            box-shadow: var(--ox-card-shadow);
+        }
+        .ox-card:hover { border-color: rgba(var(--ox-accent-rgb), 0.3); }
+        .ox-card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+        .ox-card-title {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--ox-text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+        .ox-card-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--ox-text-primary);
+            line-height: 1.2;
+        }
+        .ox-card-subtitle {
+            font-size: 11px;
+            color: var(--ox-text-muted);
+            margin-top: 4px;
+        }
+        .ox-kpi-icon {
+            width: 36px; height: 36px;
+            border-radius: var(--ox-radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+        }
+        .ox-kpi-icon.teal { background: var(--ox-accent-dim); color: var(--ox-accent); }
+        .ox-kpi-icon.blue { background: rgba(74, 158, 255, 0.15); color: var(--ox-blue); }
+        .ox-kpi-icon.orange { background: rgba(255, 140, 66, 0.15); color: var(--ox-orange); }
+        .ox-kpi-icon.purple { background: rgba(167, 139, 250, 0.15); color: var(--ox-purple); }
+        .ox-kpi-icon.red { background: rgba(255, 77, 106, 0.15); color: var(--ox-red); }
+
+        /* Tables */
+        .ox-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+        }
+        .ox-table thead th {
+            background: var(--ox-bg-secondary);
+            color: var(--ox-text-secondary);
+            font-weight: 600;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            padding: 8px 12px;
+            border-bottom: 1px solid var(--ox-border);
+            white-space: nowrap;
+        }
+        .ox-table tbody td {
+            padding: 8px 12px;
+            border-bottom: 1px solid var(--ox-border);
+            color: var(--ox-text-primary);
+        }
+        .ox-table tbody tr:hover { background: var(--ox-bg-card-hover); }
+
+        /* Buttons */
+        .ox-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 14px;
+            border-radius: var(--ox-radius-sm);
+            font-size: 12px;
+            font-weight: 500;
+            border: none;
+            cursor: pointer;
+            transition: all 0.15s;
+            text-decoration: none;
+            font-family: inherit;
+        }
+        .ox-btn-primary {
+            background: var(--ox-accent);
+            color: #fff;
+        }
+        .ox-btn-primary:hover {
+            background: var(--ox-accent-hover);
+            color: #fff;
+        }
+        .ox-btn-outline {
+            background: transparent;
+            border: 1px solid var(--ox-border);
+            color: var(--ox-text-secondary);
+        }
+        .ox-btn-outline:hover {
+            border-color: var(--ox-accent);
+            color: var(--ox-accent);
+        }
+        .ox-btn-danger {
+            background: rgba(255, 77, 106, 0.15);
+            color: var(--ox-red);
+            border: 1px solid rgba(255, 77, 106, 0.3);
+        }
+        .ox-btn-danger:hover {
+            background: rgba(255, 77, 106, 0.25);
+        }
+
+        /* Form inputs */
+        .ox-input, .ox-select, .ox-textarea {
+            width: 100%;
+            background: var(--ox-bg-input);
+            border: 1px solid var(--ox-border);
+            color: var(--ox-text-primary);
+            padding: 7px 10px;
+            border-radius: var(--ox-radius-sm);
+            font-size: 12px;
+            font-family: inherit;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s, background 0.3s;
+        }
+        .ox-input:focus, .ox-select:focus, .ox-textarea:focus {
+            border-color: var(--ox-accent);
+            box-shadow: 0 0 0 2px var(--ox-accent-dim);
+        }
+        .ox-label {
+            display: block;
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--ox-text-secondary);
+            margin-bottom: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+        }
+
+        /* Badge / Tag */
+        .ox-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+        }
+        .ox-badge-success { background: rgba(var(--ox-accent-rgb), 0.15); color: var(--ox-accent); }
+        .ox-badge-warning { background: rgba(255, 140, 66, 0.15); color: var(--ox-orange); }
+        .ox-badge-danger { background: rgba(255, 77, 106, 0.15); color: var(--ox-red); }
+        .ox-badge-info { background: rgba(74, 158, 255, 0.15); color: var(--ox-blue); }
+
+        /* Toast overrides */
+        .toast-container { z-index: 9999; }
+
+        /* Page header */
+        .ox-page-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+        .ox-page-header h1 {
+            font-size: 18px;
+            font-weight: 600;
+            margin: 0;
+            color: var(--ox-text-primary);
+        }
+        .ox-page-header .ox-breadcrumb {
+            font-size: 11px;
+            color: var(--ox-text-muted);
+            margin-top: 2px;
+        }
+        .ox-page-header .ox-breadcrumb a { color: var(--ox-text-secondary); }
+
+        /* Progress bar */
+        .ox-progress {
+            height: 4px;
+            background: var(--ox-bg-input);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+        .ox-progress-bar {
+            height: 100%;
+            background: var(--ox-accent);
+            border-radius: 2px;
+            transition: width 0.3s;
+        }
+
+        /* Tab system */
+        .ox-tabs {
+            display: flex;
+            gap: 0;
+            border-bottom: 1px solid var(--ox-border);
+            margin-bottom: 16px;
+        }
+        .ox-tab {
+            padding: 8px 16px;
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--ox-text-secondary);
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all 0.15s;
+            background: none;
+            border-top: none;
+            border-left: none;
+            border-right: none;
+            font-family: inherit;
+        }
+        .ox-tab:hover { color: var(--ox-text-primary); }
+        .ox-tab.active { color: var(--ox-accent); border-bottom-color: var(--ox-accent); }
+
+        /* ========== TILE SYSTEM ========== */
+        .ox-tile-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 12px;
+        }
+        .ox-tile {
+            background: var(--ox-bg-card);
+            border: 1px solid var(--ox-border);
+            border-radius: var(--ox-radius);
+            padding: 16px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            position: relative;
+            overflow: hidden;
+        }
+        .ox-tile:hover {
+            border-color: rgba(var(--ox-accent-rgb), 0.4);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+            transform: translateY(-1px);
+        }
+        .ox-tile-top {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+        }
+        .ox-tile-icon {
+            width: 40px; height: 40px;
+            border-radius: var(--ox-radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+        .ox-tile-icon.teal { background: var(--ox-accent-dim); color: var(--ox-accent); }
+        .ox-tile-icon.blue { background: rgba(74, 158, 255, 0.15); color: var(--ox-blue); }
+        .ox-tile-icon.orange { background: rgba(255, 140, 66, 0.15); color: var(--ox-orange); }
+        .ox-tile-icon.purple { background: rgba(167, 139, 250, 0.15); color: var(--ox-purple); }
+        .ox-tile-icon.red { background: rgba(255, 77, 106, 0.15); color: var(--ox-red); }
+        .ox-tile-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--ox-text-primary);
+            line-height: 1.3;
+        }
+        .ox-tile-subtitle {
+            font-size: 11px;
+            color: var(--ox-text-muted);
+            line-height: 1.4;
+        }
+        .ox-tile-meta {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-top: auto;
+        }
+        .ox-tile-meta-item {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 11px;
+            color: var(--ox-text-muted);
+        }
+        .ox-tile-meta-item i { font-size: 12px; }
+        .ox-tile-progress {
+            margin-top: 4px;
+        }
+        .ox-tile-progress-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 10px;
+            color: var(--ox-text-muted);
+            margin-bottom: 4px;
+        }
+        .ox-tile-actions {
+            display: flex;
+            gap: 6px;
+            margin-top: 8px;
+            padding-top: 10px;
+            border-top: 1px solid var(--ox-border);
+        }
+        .ox-tile-actions .ox-btn {
+            flex: 1;
+            justify-content: center;
+            font-size: 11px;
+            padding: 5px 8px;
+        }
+        /* Tile accent stripe */
+        .ox-tile::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            width: 3px; height: 100%;
+            background: var(--ox-accent);
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+        .ox-tile:hover::before { opacity: 1; }
+        .ox-tile.accent-blue::before { background: var(--ox-blue); }
+        .ox-tile.accent-teal::before { background: var(--ox-accent); }
+        .ox-tile.accent-orange::before { background: var(--ox-orange); }
+        .ox-tile.accent-purple::before { background: var(--ox-purple); }
+        .ox-tile.accent-red::before { background: var(--ox-red); }
+        /* Compact tile */
+        .ox-tile-compact {
+            padding: 12px;
+            flex-direction: row;
+            align-items: center;
+            gap: 12px;
+        }
+        .ox-tile-compact .ox-tile-title { font-size: 13px; }
+        /* Wide tile */
+        .ox-tile-wide {
+            grid-column: span 2;
+        }
+        @media (max-width: 640px) {
+            .ox-tile-wide { grid-column: span 1; }
+            .ox-tile-grid { grid-template-columns: 1fr; }
+        }
+
+        /* Responsive */
+        @media (max-width: 767.98px) {
+            .ox-sidebar { transform: translateX(-100%); }
+            .ox-sidebar.mobile-show { transform: translateX(0); }
+            .ox-main { margin-left: 0 !important; }
+            .ox-header-brand .ox-brand-text, .ox-header-brand .ox-version,
+            .ox-header-search, .ox-user-name, .ox-tenant-badge { display: none; }
+        }
+    </style>
+</head>
+<body>
+    <form id="form1" runat="server">
+        <!-- Header -->
+        <header class="ox-header">
+            <button type="button" class="ox-sidebar-toggle" onclick="toggleSidebar()" title="Toggle sidebar">
+                <i class="bi bi-list"></i>
+            </button>
+            <div class="ox-header-brand">
+                <div class="ox-logo">Q</div>
+                <span class="ox-brand-text">Quantaris</span>
+                <span class="ox-version">v2.0</span>
+            </div>
+            <div class="ox-header-search">
+                <i class="bi bi-search"></i>
+                <input type="text" placeholder="Search projects, tools, reports..." />
+            </div>
+            <div class="ox-header-actions">
+                <!-- Theme Selector -->
+                <div class="ox-theme-selector">
+                    <button type="button" class="ox-theme-btn" onclick="toggleThemeDropdown()" title="Change theme">
+                        <i class="bi bi-palette"></i>
+                    </button>
+                    <div class="ox-theme-dropdown" id="themeDropdown">
+                        <div class="ox-theme-dropdown-title">Select Theme</div>
+                        <button type="button" class="ox-theme-option active" data-theme="modern" onclick="setTheme('modern')">
+                            <span class="ox-theme-swatch swatch-modern"></span>
+                            <span class="ox-theme-name">Modern</span>
+                        </button>
+                        <button type="button" class="ox-theme-option" data-theme="classical" onclick="setTheme('classical')">
+                            <span class="ox-theme-swatch swatch-classical"></span>
+                            <span class="ox-theme-name">Classical</span>
+                        </button>
+                        <button type="button" class="ox-theme-option" data-theme="premium" onclick="setTheme('premium')">
+                            <span class="ox-theme-swatch swatch-premium"></span>
+                            <span class="ox-theme-name">Premium</span>
+                        </button>
+                        <button type="button" class="ox-theme-option" data-theme="minimal" onclick="setTheme('minimal')">
+                            <span class="ox-theme-swatch swatch-minimal"></span>
+                            <span class="ox-theme-name">Minimal</span>
+                        </button>
+                    </div>
+                </div>
+
+                <span class="ox-tenant-badge">
+                    <i class="bi bi-building me-1"></i><asp:Literal ID="litTenant" runat="server" />
+                </span>
+                <div class="ox-user-info">
+                    <div class="ox-user-avatar">
+                        <asp:Literal ID="litUserInitial" runat="server" />
+                    </div>
+                    <span class="ox-user-name"><asp:Literal ID="litUser" runat="server" /></span>
+                </div>
+                <asp:LinkButton ID="btnLogout" runat="server" CssClass="ox-btn-logout" OnClick="btnLogout_Click">
+                    <i class="bi bi-box-arrow-right"></i> Sign Out
+                </asp:LinkButton>
+            </div>
+        </header>
+
+        <!-- Sidebar -->
+        <nav class="ox-sidebar" id="sidebarMenu">
+            <div class="ox-sidebar-section">
+                <a class="ox-nav-link" href='<%= ResolveUrl("~/Default.aspx?tenant=" & CurrentTenantCode) %>' data-tooltip="Dashboard">
+                    <i class="bi bi-grid-1x2-fill"></i><span class="ox-nav-label">Dashboard</span>
+                </a>
+                <a class="ox-nav-link" href='<%= ResolveUrl("~/Projects/Default.aspx?tenant=" & CurrentTenantCode) %>' data-tooltip="Projects">
+                    <i class="bi bi-folder2-open"></i><span class="ox-nav-label">Projects</span>
+                </a>
+            </div>
+            <div class="ox-sidebar-divider"></div>
+            <div class="ox-sidebar-section">
+                <div class="ox-sidebar-section-title">DMAIC Workflow</div>
+                <a class="ox-nav-link" href='<%= ResolveUrl("~/DMAIC/Dashboard.aspx?tenant=" & CurrentTenantCode) %>' data-tooltip="DMAIC Board">
+                    <i class="bi bi-kanban"></i><span class="ox-nav-label">DMAIC Board</span>
+                </a>
+            </div>
+            <div class="ox-sidebar-divider"></div>
+            <div class="ox-sidebar-section">
+                <div class="ox-sidebar-section-title">Quality Tools</div>
+                <a class="ox-nav-link" href='<%= ResolveUrl("~/Tools/FMEA.aspx?tenant=" & CurrentTenantCode) %>' data-tooltip="FMEA">
+                    <i class="bi bi-shield-exclamation"></i><span class="ox-nav-label">FMEA</span>
+                </a>
+                <a class="ox-nav-link" href='<%= ResolveUrl("~/Tools/ControlCharts.aspx?tenant=" & CurrentTenantCode) %>' data-tooltip="Control Charts">
+                    <i class="bi bi-graph-up"></i><span class="ox-nav-label">Control Charts</span>
+                </a>
+                <a class="ox-nav-link" href='<%= ResolveUrl("~/Tools/ProcessCapability.aspx?tenant=" & CurrentTenantCode) %>' data-tooltip="Process Capability">
+                    <i class="bi bi-bar-chart-line"></i><span class="ox-nav-label">Process Capability</span>
+                </a>
+                <a class="ox-nav-link" href='<%= ResolveUrl("~/Tools/GageRnR.aspx?tenant=" & CurrentTenantCode) %>' data-tooltip="Gage R&R">
+                    <i class="bi bi-rulers"></i><span class="ox-nav-label">Gage R&amp;R</span>
+                </a>
+                <a class="ox-nav-link" href='<%= ResolveUrl("~/Tools/Regression.aspx?tenant=" & CurrentTenantCode) %>' data-tooltip="Regression">
+                    <i class="bi bi-reception-4"></i><span class="ox-nav-label">Regression</span>
+                </a>
+            </div>
+            <div class="ox-sidebar-divider"></div>
+            <div class="ox-sidebar-section">
+                <div class="ox-sidebar-section-title">Analysis</div>
+                <a class="ox-nav-link" href='<%= ResolveUrl("~/Tools/DOE.aspx?tenant=" & CurrentTenantCode) %>' data-tooltip="DOE">
+                    <i class="bi bi-grid-3x3"></i><span class="ox-nav-label">DOE</span>
+                </a>
+                <a class="ox-nav-link" href='<%= ResolveUrl("~/Tools/MonteCarlo.aspx?tenant=" & CurrentTenantCode) %>' data-tooltip="Monte Carlo">
+                    <i class="bi bi-dice-5"></i><span class="ox-nav-label">Monte Carlo</span>
+                </a>
+                <a class="ox-nav-link" href='<%= ResolveUrl("~/Tools/SampleSize.aspx?tenant=" & CurrentTenantCode) %>' data-tooltip="Sample Size">
+                    <i class="bi bi-calculator"></i><span class="ox-nav-label">Sample Size</span>
+                </a>
+            </div>
+            <div class="ox-sidebar-divider"></div>
+            <div class="ox-sidebar-section">
+                <div class="ox-sidebar-section-title">Management</div>
+                <a class="ox-nav-link" href='<%= ResolveUrl("~/Tools/COPQ.aspx?tenant=" & CurrentTenantCode) %>' data-tooltip="COPQ">
+                    <i class="bi bi-cash-coin"></i><span class="ox-nav-label">COPQ</span>
+                </a>
+                <a class="ox-nav-link" href='<%= ResolveUrl("~/Tools/BenefitsTracking.aspx?tenant=" & CurrentTenantCode) %>' data-tooltip="Benefits">
+                    <i class="bi bi-cash-stack"></i><span class="ox-nav-label">Benefits</span>
+                </a>
+                <a class="ox-nav-link" href='<%= ResolveUrl("~/Tools/ProjectGantt.aspx?tenant=" & CurrentTenantCode) %>' data-tooltip="Gantt Chart">
+                    <i class="bi bi-calendar-range"></i><span class="ox-nav-label">Gantt Chart</span>
+                </a>
+                <a class="ox-nav-link" href='<%= ResolveUrl("~/Tools/HoshinKanri.aspx?tenant=" & CurrentTenantCode) %>' data-tooltip="Hoshin Kanri">
+                    <i class="bi bi-diagram-3"></i><span class="ox-nav-label">Hoshin Kanri</span>
+                </a>
+                <a class="ox-nav-link" href='<%= ResolveUrl("~/Tools/QFD.aspx?tenant=" & CurrentTenantCode) %>' data-tooltip="QFD">
+                    <i class="bi bi-house-gear"></i><span class="ox-nav-label">QFD</span>
+                </a>
+            </div>
+            <div class="ox-sidebar-divider"></div>
+            <div class="ox-sidebar-section">
+                <div class="ox-sidebar-section-title">Support</div>
+                <a class="ox-nav-link" href='<%= ResolveUrl("~/Tools/TrainingLMS.aspx?tenant=" & CurrentTenantCode) %>' data-tooltip="Training">
+                    <i class="bi bi-mortarboard"></i><span class="ox-nav-label">Training</span>
+                </a>
+                <a class="ox-nav-link" href='<%= ResolveUrl("~/Tools/WorkflowDesigner.aspx?tenant=" & CurrentTenantCode) %>' data-tooltip="Workflow">
+                    <i class="bi bi-diagram-2"></i><span class="ox-nav-label">Workflow</span>
+                </a>
+                <a class="ox-nav-link" href='<%= ResolveUrl("~/Tools/AIRootCause.aspx?tenant=" & CurrentTenantCode) %>' data-tooltip="AI Root Cause">
+                    <i class="bi bi-cpu"></i><span class="ox-nav-label">AI Root Cause</span>
+                </a>
+            </div>
+            <div class="ox-sidebar-divider"></div>
+            <div class="ox-sidebar-section">
+                <div class="ox-sidebar-section-title">System</div>
+                <a class="ox-nav-link" href='<%= ResolveUrl("~/Reports/Default.aspx?tenant=" & CurrentTenantCode) %>' data-tooltip="Reports">
+                    <i class="bi bi-file-earmark-bar-graph"></i><span class="ox-nav-label">Reports</span>
+                </a>
+                <a class="ox-nav-link" href='<%= ResolveUrl("~/Admin/Default.aspx?tenant=" & CurrentTenantCode) %>' data-tooltip="Admin">
+                    <i class="bi bi-gear"></i><span class="ox-nav-label">Admin</span>
+                </a>
+                <a class="ox-nav-link" href='<%= ResolveUrl("~/Settings/Default.aspx?tenant=" & CurrentTenantCode) %>' data-tooltip="Settings">
+                    <i class="bi bi-sliders"></i><span class="ox-nav-label">Settings</span>
+                </a>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="ox-main" id="mainContent">
+            <asp:ContentPlaceHolder ID="MainContent" runat="server">
+            </asp:ContentPlaceHolder>
+        </main>
+
+        <!-- Status Bar -->
+        <footer class="ox-statusbar">
+            <div class="ox-status-item">
+                <span class="ox-status-dot"></span>
+                <span>System Online</span>
+            </div>
+            <div class="ox-status-item">
+                <i class="bi bi-database"></i>
+                <span>MariaDB 10.4</span>
+            </div>
+            <div class="ox-status-item">
+                <i class="bi bi-clock"></i>
+                <span id="statusTime"></span>
+            </div>
+            <div class="ox-status-right">
+                <div class="ox-status-item">
+                    <i class="bi bi-palette" id="themeIndicator"></i>
+                    <span id="themeLabel">Modern</span>
+                </div>
+                <div class="ox-status-item">
+                    <i class="bi bi-building"></i>
+                    <span><asp:Literal ID="litStatusTenant" runat="server" /></span>
+                </div>
+                <div class="ox-status-item">
+                    <i class="bi bi-person"></i>
+                    <span><asp:Literal ID="litStatusUser" runat="server" /></span>
+                </div>
+                <div class="ox-status-item">
+                    <span>&copy; <%= DateTime.Now.Year %> Quantaris</span>
+                </div>
+            </div>
+        </footer>
+
+        <!-- Toast Container -->
+        <div class="toast-container position-fixed end-0 p-3" style="z-index:9999; bottom: 40px !important;" id="toastContainer"></div>
+    </form>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // ========== THEME SYSTEM ==========
+        var themes = {
+            modern: { label: 'Modern', icon: 'bi-moon-stars' },
+            classical: { label: 'Classical', icon: 'bi-sun' },
+            premium: { label: 'Premium', icon: 'bi-gem' },
+            minimal: { label: 'Minimal', icon: 'bi-dash' }
+        };
+
+        function setTheme(name) {
+            if (!themes[name]) return;
+            document.documentElement.setAttribute('data-theme', name);
+            localStorage.setItem('ox-theme', name);
+            // Update theme selector UI
+            document.querySelectorAll('.ox-theme-option').forEach(function(btn) {
+                btn.classList.toggle('active', btn.getAttribute('data-theme') === name);
+            });
+            // Update status bar label
+            var label = document.getElementById('themeLabel');
+            if (label) label.textContent = themes[name].label;
+            // Close dropdown
+            document.getElementById('themeDropdown').classList.remove('show');
+        }
+
+        function toggleThemeDropdown() {
+            document.getElementById('themeDropdown').classList.toggle('show');
+        }
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(e) {
+            var dd = document.getElementById('themeDropdown');
+            var btn = e.target.closest('.ox-theme-btn');
+            if (!btn && !e.target.closest('.ox-theme-dropdown')) {
+                dd.classList.remove('show');
+            }
+        });
+
+        // Load saved theme
+        (function() {
+            var saved = localStorage.getItem('ox-theme') || 'modern';
+            setTheme(saved);
+        })();
+
+        // ========== SIDEBAR TOGGLE ==========
+        function toggleSidebar() {
+            var sidebar = document.getElementById('sidebarMenu');
+            var main = document.getElementById('mainContent');
+            if (window.innerWidth <= 767.98) {
+                sidebar.classList.toggle('mobile-show');
+            } else {
+                sidebar.classList.toggle('collapsed');
+                main.classList.toggle('sidebar-collapsed');
+                localStorage.setItem('ox-sidebar-collapsed', sidebar.classList.contains('collapsed'));
+            }
+        }
+
+        // Restore sidebar state
+        (function() {
+            if (localStorage.getItem('ox-sidebar-collapsed') === 'true' && window.innerWidth > 767.98) {
+                document.getElementById('sidebarMenu').classList.add('collapsed');
+                document.getElementById('mainContent').classList.add('sidebar-collapsed');
+            }
+        })();
+
+        // Close mobile sidebar on outside click
+        document.addEventListener('click', function(e) {
+            var sidebar = document.getElementById('sidebarMenu');
+            if (window.innerWidth <= 767.98 && sidebar.classList.contains('mobile-show') &&
+                !sidebar.contains(e.target) && !e.target.closest('.ox-sidebar-toggle')) {
+                sidebar.classList.remove('mobile-show');
+            }
+        });
+
+        // ========== STATUS BAR CLOCK ==========
+        function updateStatusTime() {
+            var el = document.getElementById('statusTime');
+            if (el) {
+                var now = new Date();
+                el.textContent = now.toLocaleTimeString('en-US', { hour12: false });
+            }
+        }
+        updateStatusTime();
+        setInterval(updateStatusTime, 1000);
+    </script>
+
+    <asp:ContentPlaceHolder ID="Scripts" runat="server">
+    </asp:ContentPlaceHolder>
+
+    <script>
+    function showToast(message, type) {
+        type = type || 'success';
+        var icons = { success: 'check-circle-fill', error: 'x-circle-fill', warning: 'exclamation-triangle-fill', info: 'info-circle-fill' };
+        var id = 'toast_' + Date.now();
+        var html = '<div id="' + id + '" class="toast align-items-center text-white border-0" role="alert" style="background:var(--ox-' + (type === 'error' ? 'red' : type === 'warning' ? 'orange' : type === 'info' ? 'blue' : 'accent') + ')">' +
+            '<div class="d-flex"><div class="toast-body"><i class="bi ' + (icons[type] || icons.success) + ' me-2"></i>' + message + '</div>' +
+            '<button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button></div></div>';
+        document.getElementById('toastContainer').insertAdjacentHTML('beforeend', html);
+        var el = document.getElementById(id);
+        var t = new bootstrap.Toast(el, { delay: 4000 });
+        t.show();
+        el.addEventListener('hidden.bs.toast', function () { el.remove(); });
+    }
+    </script>
+    <script src="<%= ResolveUrl("~/Content/grammar.js") %>"></script>
+</body>
+</html>

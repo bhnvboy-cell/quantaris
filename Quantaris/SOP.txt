@@ -1,0 +1,134 @@
+====================================================================
+ Quantaris - Server Operations & Installation Guide
+====================================================================
+
+1. PREREQUISITES
+-----------------
+- Windows (7/10/11/Server)
+- .NET Framework 4.8 (included in Windows 10/11)
+- PostgreSQL 12+ running on localhost:5432
+- Database "QuantarisDb" created with Setup.sql script
+
+2. FILE STRUCTURE
+-----------------
+  Quantaris/
+  ├── Quantaris-Server.exe    <-- Server executable
+  ├── Quantaris-Server.exe.config
+  ├── Web.config
+  ├── Default.aspx / .vb         <-- Main dashboard
+  ├── SiteMaster/                <-- Master page & sidebar
+  ├── DMAIC/                     <-- DMAIC phase pages
+  ├── Account/                   <-- Login, Register, AccessDenied
+  ├── Projects/                  <-- Project list, create, edit
+  ├── Reports/                   <-- Reports dashboard
+  ├── Admin/                     <-- Tenant & user management
+  ├── Tools/                     <-- FMEA tool
+  ├── App_Code/                  <-- Shared VB code (BasePage, helpers)
+  ├── Bin/                       <-- DLLs (Npgsql, etc.)
+  ├── Server/                    <-- Source code for server
+  │   ├── Program.cs
+  │   ├── RunServer.bat
+  │   └── Quantaris.exe       <-- Server executable (also in root)
+  └── SOP.txt                    <-- This file
+
+====================================================================
+ STARTING THE SERVER
+====================================================================
+
+  OPTION A: Double-click "Quantaris-Server.exe" in the root folder
+           (or Server\Quantaris.exe)
+
+  OPTION B: Run "Server\RunServer.bat"
+
+  The console window will show:
+  ---------------------------------------
+   Quantaris Standalone Server
+  ---------------------------------------
+   App: C:\...\Quantaris
+   URL: http://localhost:8080/
+  ---------------------------------------
+   Press Ctrl+C to stop.
+
+   Server ready! Browse to:
+   http://localhost:8080/Setup.aspx
+
+====================================================================
+ STOPPING THE SERVER
+====================================================================
+
+  - Press Ctrl+C in the server console window
+  - OR close the console window
+  - OR Task Manager > End "Quantaris-Server.exe"
+
+====================================================================
+ FIRST-TIME SETUP
+====================================================================
+
+  1. Ensure PostgreSQL is running with database "QuantarisDb"
+  2. Start the server (see above)
+  3. Open http://localhost:8080/Setup.aspx
+  4. Click "Create Demo Tenant" to create:
+       - Tenant: DEMO
+       - Admin user: admin / Admin@123
+       - Sample project: "Reduce Assembly Line Defects"
+  5. Navigate to http://localhost:8080/Account/Login.aspx
+  6. Login with: admin / Admin@123 (tenant code: DEMO)
+
+====================================================================
+ ACCESSING THE APPLICATION
+====================================================================
+
+  URL                Purpose
+  ------------------ -------------------------------------------
+  /Default.aspx      Main dashboard (project stats & progress)
+  /Projects/         Project list, create, edit
+  /DMAIC/Dashboard   DMAIC progress per project
+  /Reports/          Reports with print button
+  /Admin/            Tenant & user management
+  /Account/Login     Login page
+  /Tools/FMEA        FMEA tool
+
+====================================================================
+ TROUBLESHOOTING
+====================================================================
+
+  Issue: Server fails to start
+  Fix:   Check port 8080 is free (netstat -ano | findstr :8080)
+         Check .NET Framework 4.8 is installed
+
+  Issue: "Cannot connect to database"
+  Fix:   Verify PostgreSQL is running on localhost:5432
+         Verify database "QuantarisDb" exists
+         Check connection string in Web.config
+
+  Issue: Page shows "Server Error" / yellow screen
+  Fix:   Check the error message in the browser
+         Check the server console for detailed error output
+         Try re-running Setup.aspx to reset demo data
+
+  Issue: Login fails
+  Fix:   Run Setup.aspx first to create the admin account
+         Username: admin, Password: Admin@123, Tenant: DEMO
+
+  Issue: Changes to .vb files not taking effect
+  Fix:   ASP.NET auto-compiles App_Code on change (wait ~5 sec)
+         If pages in App_Code change, server may recycle AppDomain
+         The server handles this automatically (may cause brief delay)
+
+  Issue: Port 8080 already in use
+  Fix:   Edit Server\Program.cs line 40, change "8080" to another port
+         OR edit Server\RunServer.bat to pass a different port
+         Rebuild: cd Server && csc Program.cs /out:Quantaris.exe
+         Copy Quantaris.exe to root folder
+
+====================================================================
+ REBUILDING THE SERVER (if source changed)
+====================================================================
+
+  1. Open "Developer Command Prompt for VS 2022"
+  2. cd Server\
+  3. csc Program.cs /out:Quantaris.exe /reference:"..\Bin\Npgsql.dll"
+  4. Copy /Y Quantaris.exe ..\
+  5. Restart the server
+
+====================================================================

@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="Quantaris.Api/Quantaris.Api.csproj" />
+  <Project Path="Quantaris.Core/Quantaris.Core.csproj" />
+  <Project Path="Quantaris.Infrastructure/Quantaris.Infrastructure.csproj" />
+  <Project Path="Quantaris.Tests/Quantaris.Tests.csproj" />
+</Solution>

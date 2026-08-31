@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  quantaris-db:
+    image: mariadb:10.11
+    container_name: quantaris-db
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: quantaris
+      MYSQL_USER: quantaris
+      MYSQL_PASSWORD: quantaris123
+    ports:
+      - "3306:3306"
+    volumes:
+      - quantaris-db-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-prootpassword"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  quantaris-api:
+    build:
+      context: .
+      dockerfile: src/Dockerfile
+    container_name: quantaris-api
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__DefaultConnection=Server=quantaris-db;Port=3306;Database=quantaris;User=quantaris;Password=quantaris123;SslMode=None
+      - Jwt__Key=Quantaris-SuperSecret-Key-Change-In-Production-32ch!
+      - Jwt__Issuer=Quantaris
+      - Jwt__Audience=Quantaris
+      - Jwt__ExpiryHours=24
+    ports:
+      - "8080:8080"
+    depends_on:
+      quantaris-db:
+        condition: service_healthy
+
+volumes:
+  quantaris-db-data:
