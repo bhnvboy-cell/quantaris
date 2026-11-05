@@ -1,38 +1,59 @@
 # Quantaris
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![.NET](https://img.shields.io/badge/.NET-4.8%20%7C%208.0%20%7C%2010.0-512BD4)](https://dotnet.microsoft.com/)
+[![Database](https://img.shields.io/badge/Database-MySQL%20%2F%20MariaDB-003545)](https://mariadb.org/)
 
-A multi-tenant Six Sigma DMAIC project management platform built for quality teams. Two architectures coexist in this repository:
+A multi-tenant **Six Sigma DMAIC & Operational Excellence** SaaS platform built for quality engineering and continuous improvement teams. Two architectures coexist in this repository:
 
-1. **Legacy** — ASP.NET WebForms (.NET Framework 4.8 / VB.NET)
-2. **Modern** — ASP.NET Core Web API (C#) + Clean Architecture
+1. **Legacy Web App (`Quantaris/`)** — Full-featured ASP.NET WebForms (.NET Framework 4.8 / VB.NET) application with interactive dashboards, 15-step DMAIC workspaces, and 16 statistical/quality tools
+2. **Modern Web API (`src/`)** — Clean Architecture ASP.NET Core Web API (C#) with Entity Framework Core global query filters, JWT authentication, and Docker support
+
+---
 
 ## About
 
-Quantaris is a full-stack SaaS application for managing Six Sigma DMAIC projects end-to-end. It provides structured workflow tools, statistical analysis, and team collaboration features for quality engineers and process improvement teams.
+**Quantaris** is an end-to-end Six Sigma project management, statistical analysis, and quality governance platform. In many organizations, continuous improvement teams split their work across disconnected spreadsheets, statistical packages, slide decks, and task trackers. Quantaris unifies project execution, statistical validation, financial benefit tracking, and team certification inside a single multi-tenant workspace.
 
-### Features
+### What Problem Does Quantaris Solve?
 
-- **DMAIC Workflow** — 15-step Define/Measure/Analyze/Improve/Control lifecycle with progress tracking
-- **Quality Tools** — FMEA, Control Charts, Regression, Gage R&R, Monte Carlo, Process Capability, DOE, COPQ, QFD, Hoshin Kanri, Sample Size, Gantt Charts
-- **AI Grammar Assist** — LanguageTool-powered grammar/spelling checks on all text fields, with optional OpenAI rephrasing
-- **Dashboard** — KPI tiles, project status charts, DMAIC phase progress (Chart.js)
-- **Projects** — Create, edit, tile-based project views with status tracking and CSV export
-- **Training LMS** — Course management with quizzes and scoring
-- **Audit Trail** — Automatic logging of all record changes
-- **Multi-Tenant** — Tenant isolation at database level with JWT authentication
-- **Custom Themes** — 4 selectable UI themes (Modern, Classical, Premium, Minimal) with localStorage persistence
+- **Fragmented DMAIC Execution**: Standardizes every project around a structured **15-step Define–Measure–Analyze–Improve–Control** roadmap so nothing falls through the cracks between project chartering and control-plan handoff.
+- **Built-In Statistical Rigor**: Provides Minitab-style spreadsheet entry and instant statistical calculations ($C_p$, $C_{pk}$, $P_{pk}$, DPMO, Z-score, I-MR / $\bar{X}$-R / attribute control limits, Gage R&R ANOVA, full-factorial DOE effects, regression, and Monte Carlo simulations) directly linked to project metrics.
+- **Executive Visibility & ROI**: Connects shop-floor quality improvements to strategic goals (**Hoshin Kanri**), **Cost of Poor Quality (COPQ)** reduction, and verified **Financial Benefits Tracking**.
+- **Enterprise Multi-Tenancy & Auditability**: Isolates tenant data at the database and ORM query-filter level while recording an immutable audit trail of project and step changes.
+
+### Key Capabilities
+
+- **15-Step DMAIC Lifecycle**
+  - **Define**: Voice of the Customer (VOC), Critical-to-Quality (CTQ) trees, Project Charter & Stakeholder registry, and high-level SIPOC process mapping
+  - **Measure**: Metric definitions, Data Collection Plans, Measurement System Analysis (Gage R&R), and baseline process capability
+  - **Analyze**: Performance gap analysis, fishbone / root-cause prioritization, statistical hypothesis validation, and Bayesian AI root-cause pattern matching
+  - **Improve**: Solution brainstorming & prioritization matrices, pilot execution plans, impact validation, and Failure Mode & Effects Analysis (FMEA)
+  - **Control**: Control plans & SPC monitoring, best-practice replication across sites, and team recognition/celebration
+- **16 Integrated Quality & Statistical Tools** — FMEA, SPC Control Charts, Process Capability, COPQ Calculator, Design of Experiments (DOE), AI Root Cause Predictor, Workflow & Approval Designer, Project Gantt Chart, Gage R&R (MSA), Monte Carlo Simulation, QFD (House of Quality), Linear & Multiple Regression, Sample Size Calculator, Financial Benefits Tracking, Hoshin Kanri Policy Deployment, and a built-in Training & Certification LMS
+- **AI Writing & Grammar Assistant** — Built-in grammar/spellcheck diagnostics on project text fields with optional OpenAI-powered tone rephrasing and simplification
+- **Interactive Analytics & Reporting** — KPI cards, Chart.js doughnut/bar/radar visualizations, printable executive summaries, and one-click CSV exports
+- **Customizable UI Themes** — 4 selectable visual themes (*Modern*, *Classical*, *Premium*, *Minimal*) persisted per user
+
+### Use Cases & Target Teams
+
+- **Manufacturing & Process Industries**: Defect reduction, yield optimization, fill-weight/dimensional capability studies, and Gage R&R calibration
+- **Food & Beverage / Pharmaceuticals**: Batch consistency, SPC control charting, CAPA/FMEA risk mitigation, and audit readiness
+- **Service, Healthcare & Logistics**: Cycle-time reduction, SLA compliance, COPQ tracking, and cross-functional workflow approvals
+- **Lean Six Sigma Belt Programs**: Managing Yellow Belt, Green Belt, Black Belt, and Master Black Belt project portfolios alongside integrated LMS quizzes and certifications
 
 ### Tech Stack
 
-| Layer | Legacy | Modern |
-|-------|--------|--------|
-| Frontend | ASP.NET WebForms, Bootstrap 5, Chart.js | Blazor WebAssembly (planned) |
-| Backend | VB.NET, .NET Framework 4.8 | C#, .NET 10, ASP.NET Core 8 |
-| Database | MySQL (MariaDB 10.4) via MySql.Data | MySQL via Pomelo EF Core |
-| Auth | Session + PBKDF2 hashing | JWT Bearer tokens |
-| Grammar | LanguageTool API (free) + optional OpenAI | Same |
-| Server | Standalone Kestrel (SixSigmaSaaS-Server.exe) | Docker Compose |
+| Layer | Legacy (`Quantaris/`) | Modern (`src/`) |
+|-------|-----------------------|-----------------|
+| **Frontend** | ASP.NET WebForms, Bootstrap 5, Chart.js | REST API + Swagger/OpenAPI (SPA/Blazor ready) |
+| **Backend** | VB.NET, .NET Framework 4.8 | C#, .NET 10 / ASP.NET Core Web API |
+| **Architecture** | Page Controller + Shared `App_Code` Helpers | Clean Architecture (Core, Infrastructure, Api, Tests) |
+| **Database** | MySQL / MariaDB via `MySql.Data` | MySQL / MariaDB via Pomelo EF Core |
+| **Multi-Tenancy** | Ticket/Cookie `TenantResolver` + SQL scoping | Scoped `ITenantResolver` + EF Core Global Query Filters |
+| **Security & Auth** | FormsAuth + PBKDF2-SHA256 (100k iterations) | JWT Bearer Tokens + PBKDF2-SHA256 (`FixedTimeEquals`) |
+| **AI / Grammar** | Local rule engine + LanguageTool / OpenAI API | Shared database schema & AI root-cause entities |
+| **Deployment** | IIS or Standalone Server (`SixSigmaSaaS-Server.exe`) | Docker & Docker Compose (`mariadb:10.11` + API) |
 
 ---
 
