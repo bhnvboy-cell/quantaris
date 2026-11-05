@@ -1,5 +1,7 @@
 # Quantaris
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
 A multi-tenant Six Sigma DMAIC project management platform built for quality teams. Two architectures coexist in this repository:
 
 1. **Legacy** — ASP.NET WebForms (.NET Framework 4.8 / VB.NET)
@@ -113,8 +115,8 @@ src/
 │   │   └── TenantMiddleware          Extracts TenantId from JWT claims
 │   └── Program.cs                    DI, JWT auth, Swagger, CORS, auto-migrate
 │
-├── Quantaris.Tests/                 xUnit tests (23 passing)
-│   └── StatisticalCalculationTests  Cp, Cpk, DPMO, I-MR charts, FMEA RPN
+├── Quantaris.Tests/                 xUnit tests (31 passing)
+│   └── StatisticalCalculationTests  Cp, Cpk, DPMO, I-MR charts, FMEA RPN, Auth & Tenancy
 │
 ├── Dockerfile                       Multi-stage .NET 8 build
 └── docker-compose.yml               MariaDB 10.11 + API with healthchecks
@@ -175,11 +177,12 @@ cd src
 dotnet test
 ```
 
-23 tests covering:
+31 tests covering:
 - Process Capability (Cp, Cpk, DPMO calculations)
 - Control Charts (I-MR center line, moving range, UCL/LCL)
-- DMAIC phase mapping (step 1-15 → phase assignment)
+- DMAIC phase & step mapping (steps 1-15 → phase/name assignment)
 - FMEA RPN calculations
+- PBKDF2 & legacy SHA-256 password verification and tenant isolation
 
 ---
 
@@ -266,4 +269,4 @@ Quantaris/
 
 ## License
 
-Internal use only.
+This project is licensed under the [MIT License](LICENSE).
