@@ -8,16 +8,18 @@ public class AuditService : IAuditService
 {
     private readonly IRepository<AuditLog> _auditRepo;
     private readonly IUnitOfWork _unitOfWork;
+    private readonly ITenantResolver _tenantResolver;
 
-    public AuditService(IRepository<AuditLog> auditRepo, IUnitOfWork unitOfWork)
+    public AuditService(IRepository<AuditLog> auditRepo, IUnitOfWork unitOfWork, ITenantResolver tenantResolver)
     {
         _auditRepo = auditRepo;
         _unitOfWork = unitOfWork;
+        _tenantResolver = tenantResolver;
     }
 
     public async Task LogAsync(string action, string entityType, int? entityId, string description, string? ipAddress = null)
     {
-        var tenantId = QuantarisDbContext.GetCurrentTenantId();
+        var tenantId = _tenantResolver.GetCurrentTenantId();
         var log = new AuditLog
         {
             TenantId = tenantId,

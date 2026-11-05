@@ -1,3 +1,9 @@
+using System.Security.Cryptography;
+using System.Text;
+using Quantaris.Api.Controllers;
+using Quantaris.Infrastructure.Data;
+using Quantaris.Infrastructure.Services;
+
 namespace Quantaris.Tests;
 
 public class ProcessCapabilityTests
@@ -117,18 +123,22 @@ public class DmaicStepTests
     [InlineData(12, "Improve")]
     [InlineData(13, "Control")]
     [InlineData(15, "Control")]
+    [InlineData(99, "Unknown")]
     public void GetPhaseForStep_ReturnsCorrectPhase(int step, string expectedPhase)
     {
-        var phase = step switch
-        {
-            >= 1 and <= 3 => "Define",
-            >= 4 and <= 6 => "Measure",
-            >= 7 and <= 9 => "Analyze",
-            >= 10 and <= 12 => "Improve",
-            >= 13 and <= 15 => "Control",
-            _ => "Unknown"
-        };
+        var phase = DmaicService.GetPhaseForStep(step);
         Assert.Equal(expectedPhase, phase);
+    }
+
+    [Theory]
+    [InlineData(1, "Understand Customer & Business Requirements")]
+    [InlineData(8, "Ascertain Critical Root Causes")]
+    [InlineData(15, "Celebrate and Recognize Success")]
+    [InlineData(0, "Unknown Step")]
+    public void GetStepName_ReturnsExpectedName(int step, string expectedName)
+    {
+        var name = DmaicService.GetStepName(step);
+        Assert.Equal(expectedName, name);
     }
 
     [Fact]
@@ -146,5 +156,44 @@ public class DmaicStepTests
         int newRpn = severity * occurrence * detection;
         Assert.Equal(32, newRpn);
         Assert.True(newRpn < 96);
+    }
+}
+
+public class AuthAndTenancyTests
+{
+    [Fact]
+    public void HashAndVerifyPassword_Pbkdf2WithStoredSalt_Succeeds()
+    {
+        var salt = AuthController.GenerateSalt();
+        var hash = AuthController.HashPassword("StrongP@ss123!", salt);
+
+        Assert.True(AuthController.VerifyPassword("StrongP@ss123!", hash, salt));
+        Assert.False(AuthController.VerifyPassword("WrongPassword", hash, salt));
+    }
+
+    [Fact]
+    public void VerifyPassword_LegacySaltedSha256_Succeeds()
+    {
+        var salt = "demosalt123";
+        var combined = "Admin@123" + salt;
+        var legacyHash = Convert.ToBase64String(SHA256.HashData(Encoding.UTF8.GetBytes(combined)));
+
+        Assert.True(AuthController.VerifyPassword("Admin@123", legacyHash, salt));
+        Assert.False(AuthController.VerifyPassword("WrongPass", legacyHash, salt));
+    }
+
+    [Fact]
+    public void HttpTenantResolver_IsolatesTenantPerInstance()
+    {
+        var resolverA = new HttpTenantResolver();
+        var resolverB = new HttpTenantResolver();
+
+        resolverA.SetTenant(1, "TENANT_A");
+        resolverB.SetTenant(2, "TENANT_B");
+
+        Assert.Equal(1, resolverA.GetCurrentTenantId());
+        Assert.Equal("TENANT_A", resolverA.GetCurrentTenantCode());
+        Assert.Equal(2, resolverB.GetCurrentTenantId());
+        Assert.Equal("TENANT_B", resolverB.GetCurrentTenantCode());
     }
 }

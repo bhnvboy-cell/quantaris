@@ -1,4 +1,4 @@
-﻿Imports System.Web.UI
+Imports System.Web.UI
 Imports MySql.Data.MySqlClient
 Imports System.Configuration
 
@@ -54,7 +54,7 @@ Public MustInherit Class BasePage
             _currentTenantCode = "DEMO"
         End If
 
-        _currentTenantId = TenantResolver.ResolveTenantId()
+        _currentTenantId = TenantResolver.ResolveTenantId(_currentTenantCode)
 
         ' Ensure tenant cookie is set
         If HttpContext.Current.Request.Cookies("TenantCode") Is Nothing Then

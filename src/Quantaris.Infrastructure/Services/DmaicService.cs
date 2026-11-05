@@ -9,12 +9,18 @@ public class DmaicService : IDmaicService
     private readonly IProjectRepository _projectRepo;
     private readonly IRepository<DmaicStep> _stepRepo;
     private readonly IUnitOfWork _unitOfWork;
+    private readonly ITenantResolver _tenantResolver;
 
-    public DmaicService(IProjectRepository projectRepo, IRepository<DmaicStep> stepRepo, IUnitOfWork unitOfWork)
+    public DmaicService(
+        IProjectRepository projectRepo,
+        IRepository<DmaicStep> stepRepo,
+        IUnitOfWork unitOfWork,
+        ITenantResolver tenantResolver)
     {
         _projectRepo = projectRepo;
         _stepRepo = stepRepo;
         _unitOfWork = unitOfWork;
+        _tenantResolver = tenantResolver;
     }
 
     public async Task<IReadOnlyList<DmaicStep>> GetStepsAsync(int projectId)
@@ -22,12 +28,16 @@ public class DmaicService : IDmaicService
 
     public async Task<DmaicStep?> UpdateStepStatusAsync(int projectId, int stepNumber, string status, DateTime? completedOn = null)
     {
+        var tenantId = _tenantResolver.GetCurrentTenantId();
+        var project = await _projectRepo.GetByIdAsync(projectId);
+        if (project == null || project.TenantId != tenantId)
+            return null;
+
         var steps = await _projectRepo.GetDmaicStepsAsync(projectId);
         var step = steps.FirstOrDefault(s => s.StepNumber == stepNumber);
 
         if (step == null)
         {
-            var tenantId = QuantarisDbContext.GetCurrentTenantId();
             step = new DmaicStep
             {
                 TenantId = tenantId,

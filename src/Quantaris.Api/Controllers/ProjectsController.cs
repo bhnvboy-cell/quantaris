@@ -33,7 +33,7 @@ public class ProjectsController : ControllerBase
         _db = db;
     }
 
-    private int GetTenantId() => QuantarisDbContext.GetCurrentTenantId();
+    private int GetTenantId() => _db.CurrentTenantId;
 
     [HttpGet]
     public async Task<IActionResult> GetAll()
@@ -132,7 +132,11 @@ public class ProjectsController : ControllerBase
     [HttpPost("{projectId}/fmea")]
     public async Task<IActionResult> CreateFmea(int projectId, [FromBody] FmeaRecord record)
     {
-        record.TenantId = GetTenantId();
+        var tenantId = GetTenantId();
+        var project = await _projectRepo.GetByIdAsync(projectId);
+        if (project == null || project.TenantId != tenantId) return NotFound();
+
+        record.TenantId = tenantId;
         record.ProjectId = projectId;
         record.Rpn = record.Severity * record.Occurrence * record.Detection;
         record.NewRpn = record.NewSeverity.HasValue && record.NewOccurrence.HasValue && record.NewDetection.HasValue
@@ -146,7 +150,8 @@ public class ProjectsController : ControllerBase
     [HttpPut("{projectId}/fmea/{id}")]
     public async Task<IActionResult> UpdateFmea(int projectId, int id, [FromBody] FmeaRecord record)
     {
-        var existing = (await _fmeaRepo.FindAsync(f => f.Id == id && f.ProjectId == projectId)).FirstOrDefault();
+        var tenantId = GetTenantId();
+        var existing = (await _fmeaRepo.FindAsync(f => f.Id == id && f.ProjectId == projectId && f.TenantId == tenantId)).FirstOrDefault();
         if (existing == null) return NotFound();
 
         existing.ProcessStep = record.ProcessStep;
@@ -175,7 +180,8 @@ public class ProjectsController : ControllerBase
     [HttpDelete("{projectId}/fmea/{id}")]
     public async Task<IActionResult> DeleteFmea(int projectId, int id)
     {
-        var existing = (await _fmeaRepo.FindAsync(f => f.Id == id && f.ProjectId == projectId)).FirstOrDefault();
+        var tenantId = GetTenantId();
+        var existing = (await _fmeaRepo.FindAsync(f => f.Id == id && f.ProjectId == projectId && f.TenantId == tenantId)).FirstOrDefault();
         if (existing == null) return NotFound();
         _fmeaRepo.Delete(existing);
         await _unitOfWork.SaveChangesAsync();

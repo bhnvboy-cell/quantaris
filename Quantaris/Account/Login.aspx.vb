@@ -1,4 +1,4 @@
-﻿Imports MySql.Data.MySqlClient
+Imports MySql.Data.MySqlClient
 Imports System.Configuration
 
 Public Partial Class Account_Login
@@ -19,7 +19,7 @@ Public Partial Class Account_Login
 
     Protected Sub btnLogin_Click(sender As Object, e As EventArgs) Handles btnLogin.Click
         Dim tenantCode = litTenantCode.Text.Trim()
-        Dim tenantId = TenantResolver.ResolveTenantId()
+        Dim tenantId = TenantResolver.ResolveTenantId(tenantCode)
 
         If tenantId = 0 Then
             divError.InnerText = "Invalid tenant code."
@@ -30,7 +30,8 @@ Public Partial Class Account_Login
         Dim userId = AuthHelper.ValidateUser(txtUsername.Text.Trim(), txtPassword.Text, tenantId)
         If userId > 0 Then
             Logger.Log(tenantId, userId, "Login", "User", userId, "User logged in")
-            AuthHelper.SignIn(txtUsername.Text.Trim() & "|" & tenantCode, tenantCode, chkRemember.Checked)
+            TenantResolver.SetTenantCookie(tenantCode)
+            AuthHelper.SignIn(txtUsername.Text.Trim(), tenantCode, chkRemember.Checked)
 
             Using conn As New MySqlConnection(ConfigurationManager.ConnectionStrings("QuantarisDb").ConnectionString)
                 conn.Open()

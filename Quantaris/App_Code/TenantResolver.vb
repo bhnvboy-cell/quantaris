@@ -1,4 +1,4 @@
-﻿Imports System.Web
+Imports System.Web
 Imports MySql.Data.MySqlClient
 
 Public NotInheritable Class TenantResolver
@@ -8,7 +8,18 @@ Public NotInheritable Class TenantResolver
     Public Shared Function ResolveTenantCode() As String
         Dim tenantCode As String = String.Empty
 
-        ' Check query string first
+        ' Check authenticated identity ticket first to prevent tenant spoofing
+        If HttpContext.Current IsNot Nothing AndAlso
+           HttpContext.Current.User IsNot Nothing AndAlso
+           HttpContext.Current.User.Identity IsNot Nothing AndAlso
+           HttpContext.Current.User.Identity.IsAuthenticated Then
+            Dim parts = HttpContext.Current.User.Identity.Name.Split("|"c)
+            If parts.Length > 1 AndAlso Not String.IsNullOrEmpty(parts(1)) Then
+                Return parts(1).Trim()
+            End If
+        End If
+
+        ' Check query string next (for unauthenticated pages like Login/Register)
         If Not String.IsNullOrEmpty(HttpContext.Current.Request.QueryString("tenant")) Then
             tenantCode = HttpContext.Current.Request.QueryString("tenant").Trim()
         End If
@@ -21,14 +32,15 @@ Public NotInheritable Class TenantResolver
         Return tenantCode
     End Function
 
-    Public Shared Function ResolveTenantId() As Integer
-        Dim tenantCode As String = ResolveTenantCode()
+    Public Shared Function ResolveTenantId(Optional explicitTenantCode As String = Nothing) As Integer
+        Dim tenantCode As String = If(Not String.IsNullOrEmpty(explicitTenantCode), explicitTenantCode.Trim(), ResolveTenantCode())
         If String.IsNullOrEmpty(tenantCode) Then Return 0
 
         Dim tenantId As Integer = 0
-        ' Cache in HttpContext.Items
-        If HttpContext.Current.Items("TenantId") IsNot Nothing Then
-            Return CInt(HttpContext.Current.Items("TenantId"))
+        Dim cacheKey As String = "TenantId_" & tenantCode.ToUpperInvariant()
+        ' Cache in HttpContext.Items per tenantCode
+        If HttpContext.Current.Items(cacheKey) IsNot Nothing Then
+            Return CInt(HttpContext.Current.Items(cacheKey))
         End If
 
         Dim connString As String = System.Configuration.ConfigurationManager.ConnectionStrings("QuantarisDb").ConnectionString
@@ -40,7 +52,7 @@ Public NotInheritable Class TenantResolver
                 Dim result = cmd.ExecuteScalar()
                 If result IsNot Nothing Then
                     tenantId = CInt(result)
-                    HttpContext.Current.Items("TenantId") = tenantId
+                    HttpContext.Current.Items(cacheKey) = tenantId
                 End If
             End Using
         End Using

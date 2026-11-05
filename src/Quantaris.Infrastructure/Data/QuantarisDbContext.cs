@@ -6,12 +6,15 @@ namespace Quantaris.Infrastructure.Data;
 
 public class QuantarisDbContext : DbContext
 {
-    private static int _currentTenantId;
+    private readonly ITenantResolver? _tenantResolver;
 
-    public QuantarisDbContext(DbContextOptions<QuantarisDbContext> options) : base(options) { }
+    public QuantarisDbContext(DbContextOptions<QuantarisDbContext> options, ITenantResolver? tenantResolver = null)
+        : base(options)
+    {
+        _tenantResolver = tenantResolver;
+    }
 
-    public static void SetTenantId(int tenantId) => _currentTenantId = tenantId;
-    public static int GetCurrentTenantId() => _currentTenantId;
+    public int CurrentTenantId => _tenantResolver?.GetCurrentTenantId() ?? 0;
 
     public DbSet<Tenant> Tenants => Set<Tenant>();
     public DbSet<User> Users => Set<User>();
@@ -76,9 +79,9 @@ public class QuantarisDbContext : DbContext
             if (typeof(ITenantEntity).IsAssignableFrom(entityType.ClrType) && entityType.ClrType != typeof(Tenant))
             {
                 var method = typeof(QuantarisDbContext)
-                    .GetMethod(nameof(ApplyTenantFilter), System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static)!
+                    .GetMethod(nameof(ApplyTenantFilter), System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)!
                     .MakeGenericMethod(entityType.ClrType);
-                method.Invoke(null, new object[] { modelBuilder });
+                method.Invoke(this, new object[] { modelBuilder });
             }
         }
 
@@ -96,6 +99,7 @@ public class QuantarisDbContext : DbContext
             e.Property(u => u.Username).HasMaxLength(100).IsRequired();
             e.Property(u => u.Email).HasMaxLength(200).IsRequired();
             e.Property(u => u.PasswordHash).HasMaxLength(500).IsRequired();
+            e.Property(u => u.PasswordSalt).HasMaxLength(200);
             e.Property(u => u.FirstName).HasMaxLength(100);
             e.Property(u => u.LastName).HasMaxLength(100);
             e.Property(u => u.Role).HasMaxLength(50);
@@ -503,9 +507,8 @@ public class QuantarisDbContext : DbContext
         });
     }
 
-    private static void ApplyTenantFilter<T>(ModelBuilder modelBuilder) where T : class, ITenantEntity
+    private void ApplyTenantFilter<T>(ModelBuilder modelBuilder) where T : class, ITenantEntity
     {
-        modelBuilder.Entity<T>().HasQueryFilter(
-            e => EF.Property<int>(e, nameof(ITenantEntity.TenantId)) == _currentTenantId);
+        modelBuilder.Entity<T>().HasQueryFilter(e => e.TenantId == CurrentTenantId);
     }
 }

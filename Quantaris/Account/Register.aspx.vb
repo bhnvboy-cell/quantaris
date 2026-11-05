@@ -1,4 +1,4 @@
-﻿Imports MySql.Data.MySqlClient
+Imports MySql.Data.MySqlClient
 Imports System.Configuration
 
 Public Partial Class Account_Register
@@ -14,7 +14,7 @@ Public Partial Class Account_Register
 
     Protected Sub btnRegister_Click(sender As Object, e As EventArgs) Handles btnRegister.Click
         Dim tenantCode = litTenantCode.Text.Trim()
-        Dim tenantId = TenantResolver.ResolveTenantId()
+        Dim tenantId = TenantResolver.ResolveTenantId(tenantCode)
 
         If tenantId = 0 Then
             divError.InnerText = "Invalid tenant. Please provide a valid tenant code."

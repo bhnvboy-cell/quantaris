@@ -21,7 +21,7 @@ services:
 
   quantaris-api:
     build:
-      context: .
+      context: ..
       dockerfile: src/Dockerfile
     container_name: quantaris-api
     environment:

@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
@@ -20,6 +20,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Quantaris.Core\Quantaris.Core.csproj" />
+    <ProjectReference Include="..\Quantaris.Infrastructure\Quantaris.Infrastructure.csproj" />
+    <ProjectReference Include="..\Quantaris.Api\Quantaris.Api.csproj" />
   </ItemGroup>
 
 </Project>

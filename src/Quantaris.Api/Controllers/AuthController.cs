@@ -15,11 +15,13 @@ public class AuthController : ControllerBase
 {
     private readonly QuantarisDbContext _db;
     private readonly IJwtTokenService _jwtToken;
+    private readonly ITenantResolver _tenantResolver;
 
-    public AuthController(QuantarisDbContext db, IJwtTokenService jwtToken)
+    public AuthController(QuantarisDbContext db, IJwtTokenService jwtToken, ITenantResolver tenantResolver)
     {
         _db = db;
         _jwtToken = jwtToken;
+        _tenantResolver = tenantResolver;
     }
 
     [HttpPost("login")]
@@ -28,11 +30,15 @@ public class AuthController : ControllerBase
         var tenant = await _db.Tenants.FirstOrDefaultAsync(t => t.TenantCode == request.TenantCode && t.IsActive);
         if (tenant == null) return Unauthorized(new { error = "Invalid tenant" });
 
-        var user = await _db.Users.FirstOrDefaultAsync(u =>
-            u.Username == request.Username && u.TenantId == tenant.Id && u.IsActive);
+        _tenantResolver.SetTenant(tenant.Id, tenant.TenantCode);
+
+        var user = await _db.Users
+            .IgnoreQueryFilters()
+            .FirstOrDefaultAsync(u =>
+                u.Username == request.Username && u.TenantId == tenant.Id && u.IsActive);
         if (user == null) return Unauthorized(new { error = "Invalid credentials" });
 
-        if (!VerifyPassword(request.Password, user.PasswordHash))
+        if (!VerifyPassword(request.Password, user.PasswordHash, user.PasswordSalt))
             return Unauthorized(new { error = "Invalid credentials" });
 
         user.LastLoginOn = DateTime.UtcNow;
@@ -63,10 +69,12 @@ public class AuthController : ControllerBase
         var tenant = await _db.Tenants.FirstOrDefaultAsync(t => t.TenantCode == request.TenantCode && t.IsActive);
         if (tenant == null) return BadRequest(new { error = "Invalid tenant" });
 
-        if (await _db.Users.AnyAsync(u => u.Username == request.Username && u.TenantId == tenant.Id))
+        _tenantResolver.SetTenant(tenant.Id, tenant.TenantCode);
+
+        if (await _db.Users.IgnoreQueryFilters().AnyAsync(u => u.Username == request.Username && u.TenantId == tenant.Id))
             return Conflict(new { error = "Username already exists" });
 
-        if (await _db.Users.AnyAsync(u => u.Email == request.Email && u.TenantId == tenant.Id))
+        if (await _db.Users.IgnoreQueryFilters().AnyAsync(u => u.Email == request.Email && u.TenantId == tenant.Id))
             return Conflict(new { error = "Email already exists" });
 
         var salt = GenerateSalt();
@@ -78,9 +86,10 @@ public class AuthController : ControllerBase
             Username = request.Username,
             Email = request.Email,
             PasswordHash = hash,
+            PasswordSalt = salt,
             FirstName = request.FirstName,
             LastName = request.LastName,
-            Role = request.Role ?? "Viewer",
+            Role = "User",
             IsActive = true,
             CreatedOn = DateTime.UtcNow
         };
@@ -111,31 +120,63 @@ public class AuthController : ControllerBase
         return Ok(tenants);
     }
 
-    private static bool VerifyPassword(string password, string storedHash)
+    public static bool VerifyPassword(string password, string storedHash, string? storedSalt = null)
     {
-        if (storedHash.StartsWith("pbkdf2:"))
+        if (string.IsNullOrEmpty(storedHash)) return false;
+
+        if (storedHash.StartsWith("pbkdf2:", StringComparison.Ordinal))
         {
-            var expectedHash = storedHash[7..];
-            var userHash = HashPassword(password, Convert.ToBase64String(
-                RandomNumberGenerator.GetBytes(16)));
-            // For PBKDF2 we need the actual salt from storage
-            return false; // simplified - need salt
+            var payload = storedHash[7..];
+            string saltBase64;
+            string expectedHashBase64;
+
+            var colonIdx = payload.IndexOf(':');
+            if (colonIdx > 0)
+            {
+                saltBase64 = payload[..colonIdx];
+                expectedHashBase64 = payload[(colonIdx + 1)..];
+            }
+            else if (!string.IsNullOrEmpty(storedSalt))
+            {
+                saltBase64 = storedSalt;
+                expectedHashBase64 = payload;
+            }
+            else
+            {
+                return false;
+            }
+
+            try
+            {
+                var saltBytes = Convert.FromBase64String(saltBase64);
+                var expectedBytes = Convert.FromBase64String(expectedHashBase64);
+                var actualBytes = Rfc2898DeriveBytes.Pbkdf2(password, saltBytes, 100000, HashAlgorithmName.SHA256, 32);
+                return CryptographicOperations.FixedTimeEquals(actualBytes, expectedBytes);
+            }
+            catch (FormatException)
+            {
+                return false;
+            }
         }
-        // Legacy SHA256 comparison
-        return Convert.ToBase64String(SHA256.HashData(Encoding.UTF8.GetBytes(password))) == storedHash;
+
+        // Legacy salted/unsalted SHA256 comparison
+        var input = string.IsNullOrEmpty(storedSalt) ? password : password + storedSalt;
+        var sha256Hash = Convert.ToBase64String(SHA256.HashData(Encoding.UTF8.GetBytes(input)));
+        return CryptographicOperations.FixedTimeEquals(
+            Encoding.UTF8.GetBytes(sha256Hash),
+            Encoding.UTF8.GetBytes(storedHash));
     }
 
-    private static string GenerateSalt()
+    public static string GenerateSalt()
     {
         var saltBytes = RandomNumberGenerator.GetBytes(16);
         return Convert.ToBase64String(saltBytes);
     }
 
-    private static string HashPassword(string password, string salt)
+    public static string HashPassword(string password, string salt)
     {
         var saltBytes = Convert.FromBase64String(salt);
-        using var pbkdf2 = new Rfc2898DeriveBytes(password, saltBytes, 100000, HashAlgorithmName.SHA256);
-        var hash = pbkdf2.GetBytes(32);
+        var hash = Rfc2898DeriveBytes.Pbkdf2(password, saltBytes, 100000, HashAlgorithmName.SHA256, 32);
         return $"pbkdf2:{Convert.ToBase64String(hash)}";
     }
 }
